@@ -27,28 +27,32 @@ with open(args.input_file, mode='r') as reader:
         if child_bags != {}:
             bag_rels[parent_clean] = child_bags
     print(bag_rels)
-# determine paths to child
-paths = {}
-tmp_path = []
 
-# invert tree
-inverted_bag_rels = {}
+outer_bags = {}
+
+def find_child_bag(node, target_bag):
+    # first time for this graph if there is a match with the target
+    path = []
+    stack = [node[0]]
+
+    while(len(stack) != 0):
+        if target_bag in path:
+            return path
+        s = stack.pop()
+        if s not in path:
+            path.append(s)
+        if s not in bag_rels:
+            continue
+        for neighbour in bag_rels[s]:
+            stack.append(neighbour)
+    return path
 
 for key, value in bag_rels.items():
-    for bag in value:
-        if bag not in inverted_bag_rels:
-            inverted_bag_rels[bag] = [key]
-        else:
-            existing = inverted_bag_rels[bag]
-            existing.append(key)
-            inverted_bag_rels[bag] = existing
+    print(key)
+    if key != child_bag_color:
+        path = find_child_bag((key, value), child_bag_color)
+        print(path)
+        if path != None and child_bag_color in path:
+            outer_bags[path[0]] = True
 
-parents_of_target_child = inverted_bag_rels[child_bag_color]
-for parent in parents_of_target_child:
-    paths[parent] = True
-    if parent in inverted_bag_rels:
-        for item in inverted_bag_rels[parent]:
-            paths[item] = True
-
-print(len(paths.keys()))
-
+print(len(outer_bags.keys()))
