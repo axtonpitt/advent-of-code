@@ -5,7 +5,7 @@ def fuel_required_for_mass(mass=int):
     return floor(mass/3) - 2
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 1 – Part 1")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 1 – Part 2")
     parser.add_argument("-i", "--input-file", help="Path to input file (with \n seperated data)")
     parser.add_argument("-t", "--target-sum", help="Target sum")
     args = parser.parse_args()

@@ -26,7 +26,7 @@ def coordinates_for_movements(movements=[]):
     return coordinate_dict
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 3 – Part 1")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 3 – Part 2")
     parser.add_argument("-i", "--input-file", help="Path to input file (with \n seperated data)")
     parser.add_argument("-t", "--target-output", help="Target output")
     args = parser.parse_args()

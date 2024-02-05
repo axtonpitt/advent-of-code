@@ -1,7 +1,7 @@
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 4 – Part 1")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 4 – Part 2")
     parser.add_argument("-i", "--input-file", help="Path to input file (with \n seperated data)")
     parser.add_argument("-t", "--target-output", help="Target output")
     args = parser.parse_args()
@@ -18,6 +18,7 @@ def main():
     for password_int in password_range:
         password = str(password_int)
         contains_repeat = False
+        repeat_segments = []
         never_decreases = True
 
         if len(password) == 6:
@@ -25,14 +26,34 @@ def main():
             for char in password:
                 digit = int(char)
                 previous_digit = int(previous_char)
-
                 if digit == previous_digit:
-                    contains_repeat = True
+                    try:
+                        repeat_segment = repeat_segments[-1]
+                    except IndexError:
+                        repeat_segment = []
+                    
+                    try:
+                        if repeat_segment[0] != digit:
+                            repeat_segment = []
+                    except IndexError:
+                        pass
+
+                    if len(repeat_segment) == 0:
+                        repeat_segment.append(previous_digit)
+                        repeat_segment.append(digit)
+                        repeat_segments.append(repeat_segment)
+                    else:
+                        if repeat_segment[0] == digit:
+                            repeat_segment.append(digit)
 
                 if digit < previous_digit:
                     never_decreases = False
 
                 previous_char = char
+            
+            for segment in repeat_segments:
+                if len(segment) == 2:
+                    contains_repeat = True
             
             if contains_repeat and never_decreases:
                 valid_password_count += 1
