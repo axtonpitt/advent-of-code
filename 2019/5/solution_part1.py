@@ -85,14 +85,27 @@ def main():
             instruction_pointer += 2
 
         elif op_code == 4:
-            x = int(memory[instruction_pointer+1])
-            print(memory[x])
+            x_mode = 'position'
+
+            if len(op) < 5:
+                extra_zeros = 5 - len(op)
+                for _ in range(0,extra_zeros):
+                    op = '0' + op
+
+            if int(op[2]) == 1:
+                x_mode = 'immediate'
+            
+            if x_mode == 'immediate':
+                x = memory[instruction_pointer+1]
+            else:
+                x = memory[int(memory[instruction_pointer+1])]
+            x = int(x)
+            print(x)
 
             instruction_pointer += 2
 
         elif op_code == 99:
             output = memory[0]
-            print(output)
             break
         else:
             print('something went wrong (bad opcode)')
