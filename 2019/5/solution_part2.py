@@ -3,8 +3,8 @@ from math import floor
 import pdb
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 5 – Part 1")
-    parser.add_argument("-i", "--input-file", help="Path to input file (with \n seperated data)")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 5 – Part 2")
+    parser.add_argument("-i", "--input-file", help="Path to input file")
     parser.add_argument("-t", "--target-output", help="Target output")
     parser.add_argument("-n", "--program-input")
     args = parser.parse_args()
