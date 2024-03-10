@@ -25,11 +25,13 @@ def main():
             except KeyError:
                 orbits[planet] = {moon}
 
+    orbits_copy = orbits.copy()
     # Add any planets not as keys
-    for planet, moons in orbits.items():
+    for planet, moons in orbits_copy.items():
         existing_planets = orbits.keys()
-        if planet not in existing_planets:
-                        
+        for moon in moons:
+            if moon not in existing_planets:
+                orbits[moon] = {}
 
     # Planet keys
     # COM: {B}
@@ -47,9 +49,7 @@ def main():
 
     def find_com_distance(original_planet, new_planet, distance):
         for other_planet, moons in orbits.items():
-            moons_set = set()
-            moons_set.update(moons)
-            if new_planet in moons_set:
+            if new_planet in moons:
                 if other_planet != 'COM':
                     distance = find_com_distance(original_planet, other_planet, distance)
                     distance += 1
@@ -61,42 +61,21 @@ def main():
         distance = find_com_distance(key, key, 0)
         distance_to_center[key] = distance - 1
 
-    print(distance_to_center)
+    total_orbits = 0
 
-    def fetch_indirect_moons(planet, orbits):
-        indirect_moons = set()
-        try: 
-            moons = orbits[planet]
-            indirect_moons.update(moons)
-            for moon in moons:
-                indirect_moons.update(fetch_indirect_moons(moon, orbits))
-        except KeyError:
-            # no more indirect orbits
-            return indirect_moons
-        
-        return indirect_moons
-
-    # Update existing orbits with indirect orbits
-    for existing_planet, existing_moons in orbits.items():
-        indirect_moons = set()
-        for moon in existing_moons:
-            indirect_moons.update(fetch_indirect_moons(moon, orbits))
-        existing_moons.update(indirect_moons)
-    
-    print(orbits)
-    
-    # Tally up orbits
     for planet, moons in orbits.items():
-        total_orbit_count += len(moons)
+        total_orbits += len(moons)
+        if planet != 'COM':
+            total_orbits += distance_to_center[planet]
 
     if args.target_output != None:
-        if int(args.target_output) == total_orbit_count:
+        if int(args.target_output) == total_orbits:
             print('Target matches output')
         else:
             print('Output is incorrect')
-            print(f'Got: {total_orbit_count}')
+            print(f'Got: {total_orbits}')
     else:
-        print(total_orbit_count)
+        print(total_orbits)
 
 if __name__ == '__main__':
     main()
