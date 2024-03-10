@@ -1,7 +1,5 @@
 import argparse
 
-
-
 def main():
     parser = argparse.ArgumentParser(description="Solution to 2019 Day 6 – Part 1")
     parser.add_argument("-i", "--input-file", help="Path to input file")
@@ -27,6 +25,12 @@ def main():
             except KeyError:
                 orbits[planet] = {moon}
 
+    # Add any planets not as keys
+    for planet, moons in orbits.items():
+        existing_planets = orbits.keys()
+        if planet not in existing_planets:
+                        
+
     # Planet keys
     # COM: {B}
     # B: {C, G}
@@ -36,6 +40,28 @@ def main():
     # G: {H}
     # J: {K}
     # K: {L}
+                
+    distance_to_center = {}
+
+    # Calculate distance of planet to the COM
+
+    def find_com_distance(original_planet, new_planet, distance):
+        for other_planet, moons in orbits.items():
+            moons_set = set()
+            moons_set.update(moons)
+            if new_planet in moons_set:
+                if other_planet != 'COM':
+                    distance = find_com_distance(original_planet, other_planet, distance)
+                    distance += 1
+                else:
+                    distance += 1
+        return distance
+
+    for key in orbits.keys():
+        distance = find_com_distance(key, key, 0)
+        distance_to_center[key] = distance - 1
+
+    print(distance_to_center)
 
     def fetch_indirect_moons(planet, orbits):
         indirect_moons = set()
