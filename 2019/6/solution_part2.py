@@ -1,26 +1,24 @@
 import argparse
 
 class Tree:
-    def __init__(self):
-        self.root_key = ''
-        self.tree = {}
+    def __init__(self, root_key):
+        self.root_key = root_key
+        self.up_tree = {}
+        self.down_tree = {}
 
-    def get_root(self):
-        return self.tree[self.root_key]
-
-    def get_leaves(self):
-        print()
+    def add_node(self, node, roots, leaves):
+        self.up_tree[node] = roots
+        self.down_tree[node] = leaves
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 6 – Part 1")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 6 – Part 2")
     parser.add_argument("-i", "--input-file", help="Path to input file")
     parser.add_argument("-t", "--target-output", help="Target output")
     parser.add_argument("-n", "--program-input")
     args = parser.parse_args()
 
     orbits = {}
-
-    total_orbit_count = 0
+    inverse_orbits = {}
 
     with open(args.input_file, mode="r") as reader:
         for line in reader:
@@ -28,6 +26,7 @@ def main():
             components = orbit_line.split(')')
             planet = components[0]
             moon = components[1]
+            inverse_orbits[moon] = planet
 
             try:
                 existing_moons = orbits[planet]
@@ -53,40 +52,64 @@ def main():
     # G: {H}
     # J: {K}
     # K: {L}
-                
-    distance_to_center = {}
 
-    # Calculate distance of planet to the COM
-
-    def find_com_distance(original_planet, new_planet, distance):
-        for other_planet, moons in orbits.items():
-            if new_planet in moons:
-                if other_planet != 'COM':
-                    distance = find_com_distance(original_planet, other_planet, distance)
-                    distance += 1
-                else:
-                    distance += 1
-        return distance
-
-    for key in orbits.keys():
-        distance = find_com_distance(key, key, 0)
-        distance_to_center[key] = distance - 1
-
-    total_orbits = 0
-
+    # create tree
+    tree = Tree('COM')
     for planet, moons in orbits.items():
-        total_orbits += len(moons)
+        root = ''
         if planet != 'COM':
-            total_orbits += distance_to_center[planet]
+            root = inverse_orbits[planet]
+        tree.add_node(planet, roots={root}, leaves=moons)
+                
+    you = 'YOU'
+    santa = 'SAN'
+
+    # root is the node in the tree that is the planet that the moon is orbiting
+    # get all roots to COM for you and santa
+    # find common root
+    # count length of combined common array
+
+    roots_for_you = []
+    orbits_for_you = set()
+    you_root = you
+    while you_root != 'COM':
+        new_you_root = next(iter(tree.up_tree[you_root]))
+        roots_for_you.append(new_you_root)
+        orbits_for_you.add(new_you_root)
+        you_root = new_you_root
+    roots_for_you.append('COM')
+    orbits_for_you.add('COM')
+
+    roots_for_santa = []
+    orbits_for_santa = set()
+    santa_root = santa
+    while santa_root != 'COM':
+        new_santa_root = next(iter(tree.up_tree[santa_root]))
+        roots_for_santa.append(new_santa_root)
+        orbits_for_santa.add(new_santa_root)
+        santa_root = new_santa_root
+    roots_for_santa.append('COM')
+    orbits_for_santa.add('COM')
+
+    common_orbits = orbits_for_santa.intersection(orbits_for_you)
+    unique_orbits = []
+    for orbit in roots_for_you:
+        if orbit not in common_orbits:
+            unique_orbits.append(orbit)
+    for orbit in roots_for_santa:
+        if orbit not in common_orbits:
+            unique_orbits.append(orbit)
+
+    minimum_number_of_orbital_transfers = len(unique_orbits)
 
     if args.target_output != None:
-        if int(args.target_output) == total_orbits:
+        if int(args.target_output) == minimum_number_of_orbital_transfers:
             print('Target matches output')
         else:
             print('Output is incorrect')
-            print(f'Got: {total_orbits}')
+            print(f'Got: {minimum_number_of_orbital_transfers}')
     else:
-        print(total_orbits)
+        print(minimum_number_of_orbital_transfers)
 
 if __name__ == '__main__':
     main()
