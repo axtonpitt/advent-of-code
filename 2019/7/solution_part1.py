@@ -1,6 +1,5 @@
 import argparse
-from math import floor
-import pdb
+import itertools
 
 def main():
     parser = argparse.ArgumentParser(description="Solution to 2019 Day 5 – Part 2")
@@ -35,21 +34,22 @@ def main():
     highest_output = 0
     phase_setting_sequence = ''
 
-    for trial in range(0, 119):
+    for combination in itertools.permutations(range(5), 5):
 
         output = 0
-        sequence = ''
+        sequence = ''.join(map(str, combination))
 
         for i in range(0,5):
 
-            phase_setting = 4 - i
-            sequence += str(phase_setting)
+            phase_setting = int(sequence[i])
 
             # intcode computer below
 
             memory = list(initial_memory)
 
             instruction_pointer = 0
+            input_instructions_seen = 0
+
             while instruction_pointer < len(memory):
                 op = memory[instruction_pointer]
 
@@ -95,7 +95,12 @@ def main():
                 
                 elif op_code == 3:
                     x = int(memory[instruction_pointer+1])
-                    memory[x] = str(phase_setting)
+                    if input_instructions_seen == 0:
+                        memory[x] = str(phase_setting)
+                        input_instructions_seen += 1 
+                    elif input_instructions_seen == 1:
+                        memory[x] = str(output)
+                        input_instructions_seen += 1
 
                     instruction_pointer += 2
 
@@ -109,8 +114,7 @@ def main():
                     else:
                         x = memory[int(memory[instruction_pointer+1])]
                     x = int(x)
-                    print(x)
-                    output += x
+                    output = x
 
                     instruction_pointer += 2
                 
