@@ -2,7 +2,7 @@ import argparse
 import itertools
 
 def main():
-    parser = argparse.ArgumentParser(description="Solution to 2019 Day 5 – Part 2")
+    parser = argparse.ArgumentParser(description="Solution to 2019 Day 7 – Part 1")
     parser.add_argument("-i", "--input-file", help="Path to input file")
     args = parser.parse_args()
 
