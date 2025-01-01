@@ -17,9 +17,12 @@ nice_strings = []
 for string in strings:
     prev_char = ''
     prev_prev_char = ''
-    two_letter_pairs = {}
-    two_letter_pairs_repeats = {}
-    contains_letter_repeat = False
+    two_letter_combos = []
+    contains_two_letter_repeat = False
+
+    three_letter_combos = []
+    contains_two_letter_repeat_with_gap = False
+
     for i in range(0, len(string)):
         char = string[i]
         if prev_char != '':
