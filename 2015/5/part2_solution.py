@@ -14,35 +14,52 @@ with open(args.input_file, mode="r") as reader:
 
 nice_strings = []
 
-for string in strings:
-    two_letter_combos = []
-    contains_two_letter_repeat = False
+def get_value_or_default(lst, index, default):
+    try:
+        return lst[index]
+    except IndexError:
+        return default
 
-    three_letter_combos = []
+for string in strings:
+    two_letter_combos_by_index = {}
+    contains_two_letter_repeat = False
+    
+    # iterate through two letter combos
+    for i in range(len(string)):
+        # look at each pair, the first repeat found much check the index of the previous pair and that it doesn't overlap
+        if i > 0:
+            two_char = string[i-1:i+1]
+
+            existing_repeats = two_letter_combos_by_index.get(two_char, [])
+            existing_repeats.append(i)
+
+            two_letter_combos_by_index[two_char] = existing_repeats
+
+            other_repeats = two_letter_combos_by_index.get(two_char, [])
+
+            # check if any pair is > 2 index apart
+            for i in range(len(other_repeats)):
+                index = other_repeats[i]
+                for j in range(i+1, len(other_repeats)):
+                    other_index = other_repeats[j]
+                    if other_index - index >= 2:
+                        contains_two_letter_repeat = True
+                        break
+                if contains_two_letter_repeat:
+                    break
+
     contains_two_letter_repeat_with_gap = False
 
-    for i in range(0, len(string)):
-        if (i - 1) >= 0:
-            two_char = string[i-1:i]
-            two_letter_combos.append(two_char)
+    # iterate through three letter combos
+    for i in range(len(string)):
+        if i > 2:
+            three_char = string[i-2:i+1]
 
-            prev_two_char_array_index = i - 2
-
-            if two_letter_combos.get(prev_two_char_array_index, ''):
-
-
-        if (i - 2) >= 0:
-            three_char = string[i-2:i]
-            three_letter_combos.append(three_char)
-
-            prev_three_char_array_index = i - 3
-
-    
-    for pair, freq in two_letter_pairs.items():
-        if freq > 1:
-            two_letter_pairs_repeats[pair] = freq 
+            if three_char[0] == three_char[2]:
+                contains_two_letter_repeat_with_gap = True
+                break
         
-    if len(two_letter_pairs_repeats) > 0 and contains_letter_repeat == True:
+    if contains_two_letter_repeat == True and contains_two_letter_repeat_with_gap == True:
         nice_strings.append(string)
 
 nice_string_count = len(nice_strings)
