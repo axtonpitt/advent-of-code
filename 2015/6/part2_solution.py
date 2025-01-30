@@ -18,7 +18,7 @@ with open(args.input_file, mode="r") as reader:
 # turn on 351,678 through 951,908
 # toggle 720,196 through 897,994
 
-lights = np.zeros((1000, 1000), dtype=bool)
+lights = np.zeros((1000, 1000), dtype=int)
 
 for instruction in instructions:
     instruction_parts = instruction.split(' through ')
@@ -32,7 +32,7 @@ for instruction in instructions:
         start_coordinates = start_coordinates_and_type.split(' ')[1]
         start_x = int(start_coordinates.split(',')[0])
         start_y = int(start_coordinates.split(',')[1])
-        lights[start_x:end_x+1, start_y:end_y+1] = ~lights[start_x:end_x+1, start_y:end_y+1]
+        lights[start_x:end_x+1, start_y:end_y+1] += 2
 
     else:
         start_coordinates = start_coordinates_and_type.split(' ')[2]
@@ -40,16 +40,16 @@ for instruction in instructions:
         start_y = int(start_coordinates.split(',')[1])
         type_of_instruction = start_coordinates_and_type.split(' ')[1]
         if type_of_instruction == 'on':
-            lights[start_x:end_x+1, start_y:end_y+1] = True
+            lights[start_x:end_x+1, start_y:end_y+1] += 1
         else:
-            lights[start_x:end_x+1, start_y:end_y+1] = False
+            lights[start_x:end_x+1, start_y:end_y+1] = np.maximum(0, lights[start_x:end_x+1, start_y:end_y+1] - 1)
 
-lit_count = np.sum(lights)
+brightness_value = np.sum(lights)
 
 if args.target_sum != None:
-    if int(args.target_sum) == lit_count:
+    if int(args.target_sum) == brightness_value:
         print('Target matches output')
     else:
         print('Output is incorrect')
 else:
-    print(lit_count)
+    print(brightness_value)
