@@ -2,7 +2,7 @@ import argparse
 import hashlib
 import numpy as np
 
-parser = argparse.ArgumentParser(description="Solution to 2015 Day 6 – Part 1")
+parser = argparse.ArgumentParser(description="Solution to 2015 Day 6 – Part 2")
 parser.add_argument("-i", "--input-file", help="Path to input file (with \n seperated data)")
 parser.add_argument("-t", "--target-sum", help="Target sum")
 args = parser.parse_args()
